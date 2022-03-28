@@ -9,4 +9,9 @@ public class Controller {
     public String method() {
         return "Ana are mere";
     }
+
+    @GetMapping("/mere")
+    public String method2() {
+        return "Ana nu mai are mere";
+    }
 }
