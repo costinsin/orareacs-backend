@@ -7,14 +7,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/api")
 @AllArgsConstructor
 public class RegisterController {
-    private UserService userService;
+    private final UserService userService;
 
     @PostMapping("/register")
     public ResponseEntity<Boolean> addUser(@RequestBody User user) {
