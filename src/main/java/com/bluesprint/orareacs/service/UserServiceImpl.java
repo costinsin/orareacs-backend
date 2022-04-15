@@ -44,8 +44,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRules(new ArrayList<>());
-        user.setRole("STUDENT");
+        user.setRole("student");
         repository.save(user);
         return true;
+    }
+
+    @Override
+    public Optional<User> findUserByUsername(String username) {
+        return repository.findUserByUsername(username);
     }
 }
