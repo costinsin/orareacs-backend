@@ -53,9 +53,10 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                                             Authentication authResult) throws IOException, ServletException {
         User user = (User) authResult.getPrincipal();
         Algorithm algorithm = Algorithm.HMAC256(SECRET.getBytes());
+
         String accessToken = JWT.create()
                 .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + ACCESS_TIME_MILIS))
+                .withExpiresAt(new Date(System.currentTimeMillis() + ACCESS_TIME_MILLIS))
                 .withIssuer(request.getRequestURL().toString())
                 .withClaim(ROLES, user.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
@@ -64,7 +65,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         String refreshToken = JWT.create()
                 .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + REFRESH_TIME_MILIS))
+                .withExpiresAt(new Date(System.currentTimeMillis() + REFRESH_TIME_MILLIS))
                 .withIssuer(request.getRequestURL().toString())
                 .sign(algorithm);
 

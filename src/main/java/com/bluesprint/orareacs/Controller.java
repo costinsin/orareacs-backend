@@ -6,20 +6,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class Controller {
-    @PreAuthorize("hasAuthority('STUDENT')")
+    @PreAuthorize("hasAuthority('student')")
     @GetMapping("/api/test/student")
-    public String method() {
+    public String testStudentAccess() {
         return "Only student can access.";
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('admin')")
     @GetMapping("/api/test/admin")
-    public String method2() {
+    public String testAdminAccess() {
         return "Only admin can access.";
     }
 
     @GetMapping("/api/test")
-    public String method3() {
+    public String testEveryoneAccess() {
         return "Everyone can access.";
     }
 }
