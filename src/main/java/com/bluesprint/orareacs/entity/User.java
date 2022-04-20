@@ -25,4 +25,5 @@ public class User {
     private String group;
     private String role;
     private List<Rule> rules;
+    private String twoFactorSecret;
 }
