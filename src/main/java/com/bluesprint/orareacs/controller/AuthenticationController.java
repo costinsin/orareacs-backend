@@ -4,9 +4,13 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.bluesprint.orareacs.dto.RegisterResponse;
 import com.bluesprint.orareacs.entity.User;
+import com.bluesprint.orareacs.exception.EmailAlreadyExistsException;
 import com.bluesprint.orareacs.exception.MissingRefreshTokenException;
 import com.bluesprint.orareacs.exception.TokenValidationException;
+import com.bluesprint.orareacs.exception.UsernameAlreadyExistsException;
+import com.bluesprint.orareacs.service.TotpManager;
 import com.bluesprint.orareacs.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -29,15 +33,18 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @AllArgsConstructor
 public class AuthenticationController {
     private final UserService userService;
+    private TotpManager totpManager;
 
     @PostMapping("/register")
     public ResponseEntity<?> addUser(@RequestBody User user) {
-        boolean checkAddUser = userService.addUser(user);
+        userService.addUser(user);
+        System.out.println(user);
 
-        if (!checkAddUser) {
-            return new ResponseEntity<>(false, HttpStatus.UNPROCESSABLE_ENTITY);
-        }
-        return new ResponseEntity<>(true, HttpStatus.OK);
+        RegisterResponse response = RegisterResponse.builder()
+                .status(HttpStatus.OK.value())
+                .secretImageUri(totpManager.getUriForImage(user.getTwoFactorSecret()))
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/refreshToken")
