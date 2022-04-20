@@ -29,4 +29,26 @@ public class AuthRestExceptionHandler {
                 .build();
         return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
     }
+
+    @ExceptionHandler
+    public ResponseEntity<AuthErrorResponse> handleException(EmailAlreadyExistsException exc) {
+
+        AuthErrorResponse error = AuthErrorResponse.builder()
+                .message(exc.getMessage())
+                .status(HttpStatus.UNPROCESSABLE_ENTITY.value())
+                .timeStamp(System.currentTimeMillis() / 1000)
+                .build();
+        return new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<AuthErrorResponse> handleException(UsernameAlreadyExistsException exc) {
+
+        AuthErrorResponse error = AuthErrorResponse.builder()
+                .message(exc.getMessage())
+                .status(HttpStatus.UNPROCESSABLE_ENTITY.value())
+                .timeStamp(System.currentTimeMillis() / 1000)
+                .build();
+        return new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
 }
