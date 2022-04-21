@@ -1,6 +1,8 @@
 package com.bluesprint.orareacs.service;
 
+import com.bluesprint.orareacs.dto.LoginCredentials;
 import com.bluesprint.orareacs.entity.User;
+import com.bluesprint.orareacs.exception.BadCredentialsException;
 import com.bluesprint.orareacs.exception.EmailAlreadyExistsException;
 import com.bluesprint.orareacs.exception.UsernameAlreadyExistsException;
 import com.bluesprint.orareacs.repository.UserRepository;
@@ -58,5 +60,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public Optional<User> findUserByUsername(String username) {
         return repository.findUserByUsername(username);
+    }
+
+    @Override
+    public void checkLoginCredentials(LoginCredentials loginCredentials) {
+        Optional<User> userOptional = repository.findUserByUsername(loginCredentials.getUsername());
+
+        if (userOptional.isEmpty()) {
+            throw new BadCredentialsException("Invalid username or password!");
+        }
+
+        if (!passwordEncoder.matches(loginCredentials.getPassword(), userOptional.get().getPassword())) {
+            throw new BadCredentialsException("Invalid username or password!");
+        }
     }
 }
