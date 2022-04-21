@@ -4,12 +4,11 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.bluesprint.orareacs.dto.LoginCredentials;
 import com.bluesprint.orareacs.dto.RegisterResponse;
 import com.bluesprint.orareacs.entity.User;
-import com.bluesprint.orareacs.exception.EmailAlreadyExistsException;
 import com.bluesprint.orareacs.exception.MissingRefreshTokenException;
 import com.bluesprint.orareacs.exception.TokenValidationException;
-import com.bluesprint.orareacs.exception.UsernameAlreadyExistsException;
 import com.bluesprint.orareacs.service.TotpManager;
 import com.bluesprint.orareacs.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,13 +37,22 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<?> addUser(@RequestBody User user) {
         userService.addUser(user);
-        System.out.println(user);
 
         RegisterResponse response = RegisterResponse.builder()
                 .status(HttpStatus.OK.value())
-                .secretImageUri(totpManager.getUriForImage(user.getTwoFactorSecret()))
+                .secretImage(totpManager.getUriForImage(user.getTwoFactorSecret(), user.getUsername()))
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/checkCredentials")
+    public ResponseEntity<?> checkLoginCredentials(@RequestBody LoginCredentials loginCredentials) {
+        userService.checkLoginCredentials(loginCredentials);
+
+        Map<String, String> successResponse = new HashMap<>();
+        successResponse.put("status", Integer.toString(HttpStatus.OK.value()));
+        successResponse.put("message", "Valid user credentials!");
+        return new ResponseEntity<>(successResponse, HttpStatus.OK);
     }
 
     @GetMapping("/refreshToken")

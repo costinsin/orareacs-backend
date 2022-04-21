@@ -21,9 +21,9 @@ public class TotpManager {
         return generator.generate();
     }
 
-    public String getUriForImage(String secret) {
+    public String getUriForImage(String secret, String username) {
         QrData data = new QrData.Builder()
-                .label("user")
+                .label(username)
                 .secret(secret)
                 .issuer("orareACS")
                 .algorithm(HashingAlgorithm.SHA1)
