@@ -9,9 +9,10 @@ import lombok.Data;
 @Builder
 public class Course {
     private String name;
-    private String day;
+    private String type;
+    private String startDate;
+    private String endDate;
+    private String frequency;
     private String startHour;
     private String endHour;
-    private String courseType;
-    private int frequency;
 }
