@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
-public class AuthRestExceptionHandler {
+public class RestExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<AuthErrorResponse> handleException(MissingRefreshTokenException exc) {
 
@@ -72,5 +72,27 @@ public class AuthRestExceptionHandler {
                 .timeStamp(System.currentTimeMillis() / 1000)
                 .build();
         return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<AuthErrorResponse> handleException(TimetableAlreadyExistsException exc) {
+
+        AuthErrorResponse error = AuthErrorResponse.builder()
+                .message(exc.getMessage())
+                .status(HttpStatus.UNPROCESSABLE_ENTITY.value())
+                .timeStamp(System.currentTimeMillis() / 1000)
+                .build();
+        return new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<AuthErrorResponse> handleException(TimetableMissingException exc) {
+
+        AuthErrorResponse error = AuthErrorResponse.builder()
+                .message(exc.getMessage())
+                .status(HttpStatus.UNPROCESSABLE_ENTITY.value())
+                .timeStamp(System.currentTimeMillis() / 1000)
+                .build();
+        return new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 }
