@@ -8,6 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface TimetableRepository extends MongoRepository<Timetable, String> {
-    Optional<Timetable> findTimetableByGroup(String group);
-    boolean existsByGroup(String group);
+    Optional<Timetable> findTimetablesById(String id);
+    boolean existsById(String id);
 }

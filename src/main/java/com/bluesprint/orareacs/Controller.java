@@ -22,10 +22,4 @@ public class Controller {
     public String testEveryoneAccess() {
         return "Everyone can access.";
     }
-
-    @PreAuthorize("hasAuthority('admin')")
-    @GetMapping("/api/test/add_orar")
-    public String testOrar() {
-        return "Orar.";
-    }
 }

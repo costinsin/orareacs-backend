@@ -73,4 +73,26 @@ public class AuthRestExceptionHandler {
                 .build();
         return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
     }
+
+    @ExceptionHandler
+    public ResponseEntity<AuthErrorResponse> handleException(TimetableAlreadyExistsException exc) {
+
+        AuthErrorResponse error = AuthErrorResponse.builder()
+                .message(exc.getMessage())
+                .status(HttpStatus.FORBIDDEN.value())
+                .timeStamp(System.currentTimeMillis() / 1000)
+                .build();
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<AuthErrorResponse> handleException(TimetableMissing exc) {
+
+        AuthErrorResponse error = AuthErrorResponse.builder()
+                .message(exc.getMessage())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .timeStamp(System.currentTimeMillis() / 1000)
+                .build();
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
 }

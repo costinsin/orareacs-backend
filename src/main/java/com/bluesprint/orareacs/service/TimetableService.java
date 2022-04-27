@@ -7,5 +7,6 @@ import java.util.Optional;
 
 public interface TimetableService {
     void addTimetable(Timetable timetable);
-    Optional<Timetable> findTimetableByGroup(String group);
+    void deleteTimetable(String id);
+    Optional<Timetable> findTimetablesById(String id);
 }
