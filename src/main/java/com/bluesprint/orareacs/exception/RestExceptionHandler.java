@@ -1,17 +1,18 @@
 package com.bluesprint.orareacs.exception;
 
-import com.bluesprint.orareacs.dto.AuthErrorResponse;
+import com.bluesprint.orareacs.dto.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class RestExceptionHandler {
     @ExceptionHandler
-    public ResponseEntity<AuthErrorResponse> handleException(MissingRefreshTokenException exc) {
+    public ResponseEntity<ErrorResponse> handleException(MissingRefreshTokenException exc) {
 
-        AuthErrorResponse error = AuthErrorResponse.builder()
+        ErrorResponse error = ErrorResponse.builder()
                 .message(exc.getMessage())
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .timeStamp(System.currentTimeMillis() / 1000)
@@ -20,9 +21,9 @@ public class RestExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<AuthErrorResponse> handleException(TokenValidationException exc) {
+    public ResponseEntity<ErrorResponse> handleException(TokenValidationException exc) {
 
-        AuthErrorResponse error = AuthErrorResponse.builder()
+        ErrorResponse error = ErrorResponse.builder()
                 .message(exc.getMessage())
                 .status(HttpStatus.FORBIDDEN.value())
                 .timeStamp(System.currentTimeMillis() / 1000)
@@ -31,9 +32,9 @@ public class RestExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<AuthErrorResponse> handleException(EmailAlreadyExistsException exc) {
+    public ResponseEntity<ErrorResponse> handleException(EmailAlreadyExistsException exc) {
 
-        AuthErrorResponse error = AuthErrorResponse.builder()
+        ErrorResponse error = ErrorResponse.builder()
                 .message(exc.getMessage())
                 .status(HttpStatus.UNPROCESSABLE_ENTITY.value())
                 .timeStamp(System.currentTimeMillis() / 1000)
@@ -42,9 +43,9 @@ public class RestExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<AuthErrorResponse> handleException(UsernameAlreadyExistsException exc) {
+    public ResponseEntity<ErrorResponse> handleException(UsernameAlreadyExistsException exc) {
 
-        AuthErrorResponse error = AuthErrorResponse.builder()
+        ErrorResponse error = ErrorResponse.builder()
                 .message(exc.getMessage())
                 .status(HttpStatus.UNPROCESSABLE_ENTITY.value())
                 .timeStamp(System.currentTimeMillis() / 1000)
@@ -53,9 +54,9 @@ public class RestExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<AuthErrorResponse> handleException(BadCredentialsException exc) {
+    public ResponseEntity<ErrorResponse> handleException(BadCredentialsException exc) {
 
-        AuthErrorResponse error = AuthErrorResponse.builder()
+        ErrorResponse error = ErrorResponse.builder()
                 .message(exc.getMessage())
                 .status(HttpStatus.BAD_REQUEST.value())
                 .timeStamp(System.currentTimeMillis() / 1000)
@@ -64,9 +65,9 @@ public class RestExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<AuthErrorResponse> handleException(InvalidCodeException exc) {
+    public ResponseEntity<ErrorResponse> handleException(InvalidCodeException exc) {
 
-        AuthErrorResponse error = AuthErrorResponse.builder()
+        ErrorResponse error = ErrorResponse.builder()
                 .message(exc.getMessage())
                 .status(HttpStatus.FORBIDDEN.value())
                 .timeStamp(System.currentTimeMillis() / 1000)
@@ -75,9 +76,9 @@ public class RestExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<AuthErrorResponse> handleException(TimetableAlreadyExistsException exc) {
+    public ResponseEntity<ErrorResponse> handleException(TimetableAlreadyExistsException exc) {
 
-        AuthErrorResponse error = AuthErrorResponse.builder()
+        ErrorResponse error = ErrorResponse.builder()
                 .message(exc.getMessage())
                 .status(HttpStatus.UNPROCESSABLE_ENTITY.value())
                 .timeStamp(System.currentTimeMillis() / 1000)
@@ -86,13 +87,33 @@ public class RestExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<AuthErrorResponse> handleException(TimetableMissingException exc) {
+    public ResponseEntity<ErrorResponse> handleException(TimetableMissingException exc) {
 
-        AuthErrorResponse error = AuthErrorResponse.builder()
+        ErrorResponse error = ErrorResponse.builder()
                 .message(exc.getMessage())
                 .status(HttpStatus.UNPROCESSABLE_ENTITY.value())
                 .timeStamp(System.currentTimeMillis() / 1000)
                 .build();
         return new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleException(UsernameNotFoundException exc) {
+
+        ErrorResponse error = ErrorResponse.builder()
+                .message(exc.getMessage())
+                .status(HttpStatus.NOT_FOUND.value())
+                .timeStamp(System.currentTimeMillis() / 1000)
+                .build();
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleException(UserAccessNotPermittedException exc) {
+
+        ErrorResponse error = ErrorResponse.builder()
+                .message(exc.getMessage())
+                .status(HttpStatus.FORBIDDEN.value())
+                .timeStamp(System.currentTimeMillis() / 1000)
+                .build();
+        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
     }
 }

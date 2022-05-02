@@ -19,5 +19,6 @@ public class FilterUtils {
     public static final String TWO_FACTOR_SECRET_FIELD = "twoFactorSecret";
     public static final String DB_CONNECT_URL = System.getenv("SPRING_DATA_MONGODB_URI");
 
-
+    public static final String STUDENT_ROLE = "student";
+    public static final String ADMIN_ROLE = "admin";
 }
