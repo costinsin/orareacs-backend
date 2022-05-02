@@ -21,6 +21,7 @@ public class User {
     private String password;
     private String firstName;
     private String lastName;
+    @Indexed(unique = true)
     private String email;
     private String group;
     private String role;

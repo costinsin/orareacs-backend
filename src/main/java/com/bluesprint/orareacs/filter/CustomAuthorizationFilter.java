@@ -4,7 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.bluesprint.orareacs.dto.AuthErrorResponse;
+import com.bluesprint.orareacs.dto.ErrorResponse;
 import com.bluesprint.orareacs.exception.TokenValidationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
@@ -20,13 +20,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import static com.bluesprint.orareacs.filter.FilterUtils.*;
 import static java.util.Arrays.stream;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
@@ -64,7 +61,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                 } catch (Exception exception) {
                     response.setContentType(APPLICATION_JSON_VALUE);
                     response.setStatus(HttpStatus.FORBIDDEN.value());
-                    AuthErrorResponse error = AuthErrorResponse.builder()
+                    ErrorResponse error = ErrorResponse.builder()
                             .message(exception.getMessage())
                             .status(HttpStatus.FORBIDDEN.value())
                             .timeStamp(System.currentTimeMillis() / 1000)

@@ -6,6 +6,7 @@ import com.bluesprint.orareacs.exception.TimetableMissingException;
 import com.bluesprint.orareacs.repository.TimetableRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -14,6 +15,7 @@ import java.util.Optional;
 public class TimetableServiceImpl implements TimetableService{
     private final TimetableRepository repository;
     @Override
+    @Transactional
     public void addTimetable(Timetable timetable) {
         if (repository.existsByGroup(timetable.getGroup())) {
             throw new TimetableAlreadyExistsException("Timetable for group: " + timetable.getGroup() +
@@ -24,6 +26,7 @@ public class TimetableServiceImpl implements TimetableService{
     }
 
     @Override
+    @Transactional
     public void deleteTimetableByGroup(String group) {
         if (!repository.existsByGroup(group)) {
             throw new TimetableMissingException("Timetable for group: " + group +
