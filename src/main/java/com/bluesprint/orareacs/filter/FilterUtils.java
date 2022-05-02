@@ -22,5 +22,6 @@ public class FilterUtils {
     public static final String DB_CONNECT_URL = "mongodb+srv://stefan00:st3f4n@testcluster.pg6jd.mongodb.net/" +
             "orareACS?retryWrites=true&w=majority";
 
-
+    public static final String STUDENT_ROLE = "student";
+    public static final String ADMIN_ROLE = "admin";
 }

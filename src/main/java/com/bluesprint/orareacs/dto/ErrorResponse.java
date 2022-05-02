@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Builder
-public class AuthErrorResponse {
+public class ErrorResponse {
     private String message;
     private long timeStamp;
     private int status;

@@ -2,7 +2,7 @@ package com.bluesprint.orareacs.filter;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.bluesprint.orareacs.dto.AuthErrorResponse;
+import com.bluesprint.orareacs.dto.ErrorResponse;
 import com.bluesprint.orareacs.dto.LoginCredentials;
 import com.bluesprint.orareacs.exception.InvalidCodeException;
 import com.bluesprint.orareacs.service.TotpManager;
@@ -26,7 +26,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -73,7 +72,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 !totpManager.verifyCode(loginCredentials.getCode(), result.getString(TWO_FACTOR_SECRET_FIELD))) {
             response.setContentType(APPLICATION_JSON_VALUE);
             response.setStatus(HttpStatus.FORBIDDEN.value());
-            AuthErrorResponse error = AuthErrorResponse.builder()
+            ErrorResponse error = ErrorResponse.builder()
                     .message("Invalid code entered!")
                     .status(HttpStatus.FORBIDDEN.value())
                     .timeStamp(System.currentTimeMillis() / 1000)
