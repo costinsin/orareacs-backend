@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 @Builder
 public class Rule {
+    private String id;
     private String type;
     private Course course;
 }

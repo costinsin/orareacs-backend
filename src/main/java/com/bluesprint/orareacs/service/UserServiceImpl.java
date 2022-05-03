@@ -1,6 +1,7 @@
 package com.bluesprint.orareacs.service;
 
 import com.bluesprint.orareacs.dto.LoginCredentials;
+import com.bluesprint.orareacs.dto.UserUpdateDto;
 import com.bluesprint.orareacs.entity.User;
 import com.bluesprint.orareacs.exception.BadCredentialsException;
 import com.bluesprint.orareacs.exception.EmailAlreadyExistsException;
@@ -74,6 +75,41 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         if (!passwordEncoder.matches(loginCredentials.getPassword(), userOptional.get().getPassword())) {
             throw new BadCredentialsException("Invalid username or password!");
+        }
+    }
+
+    @Override
+    public void updateUser(String username, UserUpdateDto userUpdateDto) {
+        Optional<User> userOptional = repository.findUserByUsername(username);
+
+        if (userOptional.isEmpty()) {
+            throw new UsernameNotFoundException("Invalid username!");
+        }
+        User user = userOptional.get();
+        updateUserFields(user, userUpdateDto);
+
+        repository.save(user);
+    }
+
+    private void updateUserFields(User user, UserUpdateDto userUpdateDto) {
+        if (userUpdateDto.getEmail() != null) {
+            if (repository.existsByEmail(userUpdateDto.getEmail())) {
+                throw new EmailAlreadyExistsException("Email: " +
+                        userUpdateDto.getEmail() + " already exists!");
+            }
+            user.setEmail(userUpdateDto.getEmail());
+        }
+        if (userUpdateDto.getGroup() != null) {
+            user.setGroup(userUpdateDto.getGroup());
+        }
+        if (userUpdateDto.getFirstName() != null) {
+            user.setFirstName(userUpdateDto.getFirstName());
+        }
+        if (userUpdateDto.getLastName() != null) {
+            user.setLastName(userUpdateDto.getLastName());
+        }
+        if (userUpdateDto.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(userUpdateDto.getPassword()));
         }
     }
 }
