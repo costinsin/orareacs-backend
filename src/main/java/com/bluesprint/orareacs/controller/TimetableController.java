@@ -1,5 +1,7 @@
 package com.bluesprint.orareacs.controller;
 
+import com.auth0.jwt.JWT;
+import com.bluesprint.orareacs.dto.Event;
 import com.bluesprint.orareacs.dto.TimetableAddResponse;
 import com.bluesprint.orareacs.dto.TimetableDeleteResponse;
 import com.bluesprint.orareacs.entity.Timetable;
@@ -9,6 +11,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+import static com.bluesprint.orareacs.filter.FilterUtils.TOKEN_HEADER;
 
 @RestController
 @RequestMapping("/api")
@@ -39,5 +45,15 @@ public class TimetableController {
                 .message("Timetable for group: " + group + " deleted.")
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('student')")
+    @GetMapping("/timetable")
+    public ResponseEntity<?> getTimetable(@RequestHeader("Authorization") String authorizationHeader) {
+        String token = authorizationHeader.substring(TOKEN_HEADER.length());
+        String username = JWT.decode(token).getSubject();
+        List<Event> events = timetableService.getTimetable(username);
+
+        return new ResponseEntity<>(events, HttpStatus.OK);
     }
 }
