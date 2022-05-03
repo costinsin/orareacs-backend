@@ -8,12 +8,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @AllArgsConstructor
 public class TimetableServiceImpl implements TimetableService{
     private final TimetableRepository repository;
+
     @Override
     @Transactional
     public void addTimetable(Timetable timetable) {

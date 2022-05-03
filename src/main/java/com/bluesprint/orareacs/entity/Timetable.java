@@ -7,7 +7,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Date;
 import java.util.List;
+
 @Document
 @AllArgsConstructor
 @Data
@@ -17,6 +19,7 @@ public class Timetable {
     private String id;
     @Indexed(unique = true)
     private String group;
-    private String startDate;
+    private Date startDate;
+    private Date endDate;
     private List<Course> courses;
 }
