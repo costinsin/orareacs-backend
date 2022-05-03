@@ -46,11 +46,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Transactional
     public void addUser(User user) {
         if (repository.existsByUsername(user.getUsername())) {
-            throw new UsernameAlreadyExistsException("Username: " + user.getUsername() + " already exists!");
+            throw new UsernameAlreadyExistsException("Username " + user.getUsername() + " already exists!");
         }
 
         if (repository.existsByEmail(user.getEmail())) {
-            throw new EmailAlreadyExistsException("Email: " + user.getEmail() + " already exists!");
+            throw new EmailAlreadyExistsException("Email " + user.getEmail() + " already exists!");
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
