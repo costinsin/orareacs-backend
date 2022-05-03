@@ -1,0 +1,18 @@
+package com.bluesprint.orareacs.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.Date;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Builder
+public class Event {
+    private String name;
+    private Date startDate;
+    private Date endDate;
+}
