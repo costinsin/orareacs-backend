@@ -4,14 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Date;
+
 @AllArgsConstructor
 @Data
 @Builder
 public class Course {
     private String name;
     private String type;
-    private String startDate;
-    private String endDate;
+    private Date startDate;
+    private Date endDate;
     private String frequency;
     private String startHour;
     private String endHour;

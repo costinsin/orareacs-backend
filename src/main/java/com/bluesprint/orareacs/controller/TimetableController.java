@@ -1,6 +1,5 @@
 package com.bluesprint.orareacs.controller;
 
-import com.bluesprint.orareacs.dto.RegisterResponse;
 import com.bluesprint.orareacs.dto.TimetableAddResponse;
 import com.bluesprint.orareacs.dto.TimetableDeleteResponse;
 import com.bluesprint.orareacs.entity.Timetable;
