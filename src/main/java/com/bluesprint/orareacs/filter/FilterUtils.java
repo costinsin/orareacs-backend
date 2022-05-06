@@ -10,7 +10,7 @@ public class FilterUtils {
     public static final String ACCESS_TOKEN = "accessToken";
     public static final String REFRESH_TOKEN = "refreshToken";
     public static final String ROLE = "role";
-    public static long ACCESS_TIME_MILLIS = 10 * 60 * 1000;
+    public static long ACCESS_TIME_MILLIS = 20 * 60 * 1000;
     public static long REFRESH_TIME_MILLIS = 7200 * 60 * 1000;
     public static List<String> PUBLIC_URLS = List.of("/api/register", "/api", "/api/login", "/api/refreshToken",
             "/api/checkCredentials");
@@ -21,7 +21,4 @@ public class FilterUtils {
     public static final String TWO_FACTOR_SECRET_FIELD = "twoFactorSecret";
     public static final String DB_CONNECT_URL = "mongodb+srv://stefan00:st3f4n@testcluster.pg6jd.mongodb.net/" +
             "orareACS?retryWrites=true&w=majority";
-
-    public static final String STUDENT_ROLE = "student";
-    public static final String ADMIN_ROLE = "admin";
 }

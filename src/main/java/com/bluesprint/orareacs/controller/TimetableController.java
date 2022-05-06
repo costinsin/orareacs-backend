@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.bluesprint.orareacs.dto.Event;
 import com.bluesprint.orareacs.dto.TimetableAddResponse;
 import com.bluesprint.orareacs.dto.TimetableDeleteResponse;
+import com.bluesprint.orareacs.entity.Course;
 import com.bluesprint.orareacs.entity.Timetable;
 import com.bluesprint.orareacs.service.TimetableService;
 import lombok.AllArgsConstructor;
@@ -55,5 +56,15 @@ public class TimetableController {
         List<Event> events = timetableService.getTimetable(username);
 
         return new ResponseEntity<>(events, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('student')")
+    @GetMapping("/course")
+    public ResponseEntity<?> getCourse(@RequestHeader("Authorization") String authorizationHeader) {
+        String token = authorizationHeader.substring(TOKEN_HEADER.length());
+        String username = JWT.decode(token).getSubject();
+        List<Course> courses = timetableService.getCourses(username);
+
+        return new ResponseEntity<>(courses, HttpStatus.OK);
     }
 }
