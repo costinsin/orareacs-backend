@@ -1,6 +1,7 @@
 package com.bluesprint.orareacs.service;
 
 import com.bluesprint.orareacs.dto.Event;
+import com.bluesprint.orareacs.entity.Course;
 import com.bluesprint.orareacs.entity.Rule;
 import com.bluesprint.orareacs.entity.Timetable;
 import com.bluesprint.orareacs.entity.User;
@@ -12,14 +13,12 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,6 +35,7 @@ public class TimetableServiceImpl implements TimetableService {
                     " already exists!");
         }
 
+        timetable.getCourses().forEach(course -> course.setId(UUID.randomUUID().toString()));
         timetableRepository.save(timetable);
     }
 
@@ -51,8 +51,7 @@ public class TimetableServiceImpl implements TimetableService {
     }
 
     @Override
-    public List<Event> getTimetable(String username) {
-        List<Event> events = new ArrayList<>();
+    public List<Course> getCourses(String username) {
         Optional<User> userOptional = userRepository.findUserByUsername(username);
 
         if (userOptional.isEmpty()) {
@@ -61,7 +60,25 @@ public class TimetableServiceImpl implements TimetableService {
         User user = userOptional.get();
         Optional<Timetable> optionalTimetable = timetableRepository.getTimetableByGroup(user.getGroup());
         if (optionalTimetable.isEmpty()) {
-            throw new TimetableMissingException("Timetable for group: " + user.getGroup() +
+            throw new TimetableMissingException("Timetable for group " + user.getGroup() +
+                    " does not exist!");
+        }
+        Timetable timetable = optionalTimetable.get();
+
+        return timetable.getCourses();
+    }
+
+    @Override
+    public List<Event> getTimetable(String username) {
+        Optional<User> userOptional = userRepository.findUserByUsername(username);
+
+        if (userOptional.isEmpty()) {
+            throw new UsernameNotFoundException("User not found!");
+        }
+        User user = userOptional.get();
+        Optional<Timetable> optionalTimetable = timetableRepository.getTimetableByGroup(user.getGroup());
+        if (optionalTimetable.isEmpty()) {
+            throw new TimetableMissingException("Timetable for group " + user.getGroup() +
                     " does not exist!");
         }
         Timetable timetable = optionalTimetable.get();
@@ -73,70 +90,116 @@ public class TimetableServiceImpl implements TimetableService {
                 .filter(rule -> rule.getType().equalsIgnoreCase("remove"))
                 .collect(Collectors.toList());
 
-        for (Rule rule : addRules) {
-            if (rule.getCourse().getFrequency().equalsIgnoreCase("once")) {
-                Date startDate = addHour(rule.getCourse().getStartDate(), rule.getCourse().getStartHour());
-                Date endDate = addHour(rule.getCourse().getStartDate(), rule.getCourse().getEndHour());
+        List<Event> timetableEvents = timetable.getCourses().stream()
+                .map(course -> processRemoveRule(removeRules, course, timetable))
+                .flatMap(List::stream)
+                .toList();
+        List<Event> addRuleEvents = addRules.stream()
+                .map(rule -> getEventsFromAddRule(timetable, rule))
+                .flatMap(List::stream)
+                .toList();
 
+        List<Event> result = new ArrayList<>(addRuleEvents);
+        result.addAll(timetableEvents);
+
+        return result;
+    }
+
+    private List<Event> processRemoveRule(List<Rule> removeRules, Course course, Timetable timetable) {
+        Rule rule = Rule.builder()
+                .type("add")
+                .id(UUID.randomUUID().toString())
+                .course(course)
+                .build();
+
+        List<Event> events = getEventsFromAddRule(timetable, rule);
+
+        return events.stream()
+                .filter(event -> {
+                    boolean checkEvent = true;
+
+                    for (Rule value : removeRules) {
+                        if (value.getCourse().getId().equals(course.getId()) &&
+                                event.getStartDate().after(value.getCourse().getStartDate()) &&
+                                event.getStartDate().before(value.getCourse().getEndDate())) {
+                            checkEvent = false;
+                            break;
+                        }
+                    }
+
+                    return checkEvent;
+                })
+                .toList();
+    }
+
+    private List<Event> getEventsFromAddRule(Timetable timetable, Rule rule) {
+        List<Event> events = new ArrayList<>();
+
+        if (rule.getCourse().getFrequency().equalsIgnoreCase("once")) {
+            Date startDate = addHour(rule.getCourse().getStartDate(), rule.getCourse().getStartHour());
+            Date endDate = addHour(rule.getCourse().getStartDate(), rule.getCourse().getEndHour());
+
+            Event event = Event.builder()
+                    .name(rule.getCourse().getName() + " - " + StringUtils.capitalize(rule.getCourse().getType()))
+                    .startDate(startDate)
+                    .endDate(endDate)
+                    .build();
+            events.add(event);
+        }
+
+        if (rule.getCourse().getFrequency().equalsIgnoreCase("weekly")) {
+            Date currentDate = rule.getCourse().getStartDate();
+
+            while (currentDate.before(rule.getCourse().getEndDate()) ||
+                    currentDate.equals(rule.getCourse().getEndDate())) {
                 Event event = Event.builder()
-                        .name(rule.getCourse().getName())
-                        .startDate(startDate)
-                        .endDate(endDate)
+                        .name(rule.getCourse().getName() + " - " + StringUtils.capitalize(rule.getCourse().getType()))
+                        .startDate(addHour(currentDate, rule.getCourse().getStartHour()))
+                        .endDate(addHour(currentDate, rule.getCourse().getEndHour()))
                         .build();
                 events.add(event);
+
+                currentDate = addDays(currentDate, 7);
+            }
+        }
+
+        if (rule.getCourse().getFrequency().equalsIgnoreCase("even")) {
+            Date currentDate = rule.getCourse().getStartDate();
+            long weeksBetween = getWeeksBetween(currentDate, timetable.getStartDate());
+            if ((weeksBetween + 1) % 2 != 0) {
+                currentDate = addDays(currentDate, 7);
             }
 
-            if (rule.getCourse().getFrequency().equalsIgnoreCase("weekly")) {
-                Date currentDate = rule.getCourse().getStartDate();
+            while (currentDate.before(rule.getCourse().getEndDate()) ||
+                    currentDate.equals(rule.getCourse().getEndDate())) {
+                Event event = Event.builder()
+                        .name(rule.getCourse().getName() + " - " + StringUtils.capitalize(rule.getCourse().getType()))
+                        .startDate(addHour(currentDate, rule.getCourse().getStartHour()))
+                        .endDate(addHour(currentDate, rule.getCourse().getEndHour()))
+                        .build();
+                events.add(event);
 
-                while (currentDate.before(timetable.getEndDate())) {
-                    Event event = Event.builder()
-                            .name(rule.getCourse().getName())
-                            .startDate(addHour(currentDate, rule.getCourse().getStartHour()))
-                            .endDate(addHour(currentDate, rule.getCourse().getEndHour()))
-                            .build();
-                    events.add(event);
+                currentDate = addDays(currentDate, 14);
+            }
+        }
 
-                    currentDate = addDays(currentDate, 7);
-                }
+        if (rule.getCourse().getFrequency().equalsIgnoreCase("odd")) {
+            Date currentDate = rule.getCourse().getStartDate();
+            long weeksBetween = getWeeksBetween(currentDate, timetable.getStartDate());
+            if ((weeksBetween + 1) % 2 == 0) {
+                currentDate = addDays(currentDate, 7);
             }
 
-            if (rule.getCourse().getFrequency().equalsIgnoreCase("even")) {
-                Date currentDate = rule.getCourse().getStartDate();
-                long weeksBetween = getWeeksBetween(currentDate, timetable.getStartDate());
-                if ((weeksBetween + 1) % 2 != 0) {
-                    currentDate = addDays(currentDate, 7);
-                }
+            while (currentDate.before(rule.getCourse().getEndDate()) ||
+                    currentDate.equals(rule.getCourse().getEndDate())) {
+                Event event = Event.builder()
+                        .name(rule.getCourse().getName() + " - " + StringUtils.capitalize(rule.getCourse().getType()))
+                        .startDate(addHour(currentDate, rule.getCourse().getStartHour()))
+                        .endDate(addHour(currentDate, rule.getCourse().getEndHour()))
+                        .build();
+                events.add(event);
 
-                while (currentDate.before(timetable.getEndDate())) {
-                    Event event = Event.builder()
-                            .name(rule.getCourse().getName())
-                            .startDate(addHour(currentDate, rule.getCourse().getStartHour()))
-                            .endDate(addHour(currentDate, rule.getCourse().getEndHour()))
-                            .build();
-                    events.add(event);
-
-                    currentDate = addDays(currentDate, 14);
-                }
-            }
-
-            if (rule.getCourse().getFrequency().equalsIgnoreCase("odd")) {
-                Date currentDate = rule.getCourse().getStartDate();
-                long weeksBetween = getWeeksBetween(currentDate, timetable.getStartDate());
-                if ((weeksBetween + 1) % 2 == 0) {
-                    currentDate = addDays(currentDate, 7);
-                }
-
-                while (currentDate.before(timetable.getEndDate())) {
-                    Event event = Event.builder()
-                            .name(rule.getCourse().getName())
-                            .startDate(addHour(currentDate, rule.getCourse().getStartHour()))
-                            .endDate(addHour(currentDate, rule.getCourse().getEndHour()))
-                            .build();
-                    events.add(event);
-
-                    currentDate = addDays(currentDate, 14);
-                }
+                currentDate = addDays(currentDate, 14);
             }
         }
 
@@ -154,7 +217,7 @@ public class TimetableServiceImpl implements TimetableService {
         LocalDateTime localDateTime = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 
         String[] split = hour.split(":");
-        localDateTime = localDateTime.plusHours(Integer.parseInt(split[0])).plusMinutes(Integer.parseInt(split[0]));
+        localDateTime = localDateTime.plusHours(Integer.parseInt(split[0])).plusMinutes(Integer.parseInt(split[1]));
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
