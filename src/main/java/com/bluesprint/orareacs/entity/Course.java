@@ -10,6 +10,7 @@ import java.util.Date;
 @Data
 @Builder
 public class Course {
+    private String id;
     private String name;
     private String type;
     private Date startDate;
