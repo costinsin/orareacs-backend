@@ -19,7 +19,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -70,13 +69,11 @@ public class TimetableServiceImpl implements TimetableService {
 
     @Override
     public List<String> getGroups() {
-        Optional<List<Timetable>> timetableList = timetableRepository.getAllByIdNotNull();
-        if (timetableList.isEmpty()) {
-            return null;
-        }
+        List<Timetable> timetableList = timetableRepository.findAll();
 
-        return timetableList.get().stream()
+        return timetableList.stream()
                 .map(Timetable::getGroup)
+                .sorted()
                 .toList();
     }
 
@@ -97,10 +94,10 @@ public class TimetableServiceImpl implements TimetableService {
 
         List<Rule> addRules = user.getRules().stream()
                 .filter(rule -> rule.getType().equalsIgnoreCase("add"))
-                .collect(Collectors.toList());
+                .toList();
         List<Rule> removeRules = user.getRules().stream()
                 .filter(rule -> rule.getType().equalsIgnoreCase("remove"))
-                .collect(Collectors.toList());
+                .toList();
 
         List<Event> timetableEvents = timetable.getCourses().stream()
                 .map(course -> processRemoveRule(removeRules, course, timetable))
@@ -131,7 +128,8 @@ public class TimetableServiceImpl implements TimetableService {
                     boolean checkEvent = true;
 
                     for (Rule value : removeRules) {
-                        if (value.getCourse().getId().equals(course.getId()) &&
+                        if (value.getId() != null &&
+                                value.getCourse().getId().equals(course.getId()) &&
                                 event.getStart().after(value.getCourse().getStartDate()) &&
                                 event.getStart().before(value.getCourse().getEndDate())) {
                             checkEvent = false;
