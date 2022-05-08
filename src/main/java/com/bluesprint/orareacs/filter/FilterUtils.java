@@ -11,7 +11,7 @@ public class FilterUtils {
     public static long ACCESS_TIME_MILLIS = 20 * 60 * 1000;
     public static long REFRESH_TIME_MILLIS = 7200 * 60 * 1000;
     public static List<String> PUBLIC_URLS = List.of("/api/register", "/api", "/api/login", "/api/refreshToken",
-            "/api/checkCredentials");
+            "/api/checkCredentials", "/api/getGroups");
     public static final String TOKEN_HEADER = "Bearer ";
     public static final String DATABASE = "orareACS";
     public static final String COLLECTION = "user";
