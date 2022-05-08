@@ -18,4 +18,5 @@ public class Course {
     private String frequency;
     private String startHour;
     private String endHour;
+    private String classroom;
 }

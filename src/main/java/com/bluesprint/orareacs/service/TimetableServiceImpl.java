@@ -153,6 +153,7 @@ public class TimetableServiceImpl implements TimetableService {
                     .title(rule.getCourse().getName() + " - " + StringUtils.capitalize(rule.getCourse().getType()))
                     .start(startDate)
                     .end(endDate)
+                    .classroom(rule.getCourse().getClassroom())
                     .build();
             events.add(event);
         }
@@ -166,6 +167,7 @@ public class TimetableServiceImpl implements TimetableService {
                         .title(rule.getCourse().getName() + " - " + StringUtils.capitalize(rule.getCourse().getType()))
                         .start(addHour(currentDate, rule.getCourse().getStartHour()))
                         .end(addHour(currentDate, rule.getCourse().getEndHour()))
+                        .classroom(rule.getCourse().getClassroom())
                         .build();
                 events.add(event);
 
@@ -186,6 +188,7 @@ public class TimetableServiceImpl implements TimetableService {
                         .title(rule.getCourse().getName() + " - " + StringUtils.capitalize(rule.getCourse().getType()))
                         .start(addHour(currentDate, rule.getCourse().getStartHour()))
                         .end(addHour(currentDate, rule.getCourse().getEndHour()))
+                        .classroom(rule.getCourse().getClassroom())
                         .build();
                 events.add(event);
 
@@ -206,6 +209,7 @@ public class TimetableServiceImpl implements TimetableService {
                         .title(rule.getCourse().getName() + " - " + StringUtils.capitalize(rule.getCourse().getType()))
                         .start(addHour(currentDate, rule.getCourse().getStartHour()))
                         .end(addHour(currentDate, rule.getCourse().getEndHour()))
+                        .classroom(rule.getCourse().getClassroom())
                         .build();
                 events.add(event);
 
