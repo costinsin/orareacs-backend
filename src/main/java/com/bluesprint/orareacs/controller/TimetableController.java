@@ -71,9 +71,7 @@ public class TimetableController {
     @GetMapping("/getGroups")
     public ResponseEntity<?> getGroups() {
         List<String> groups = timetableService.getGroups();
-        if (groups == null) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
+
         return new ResponseEntity<>(groups, HttpStatus.OK);
     }
 }

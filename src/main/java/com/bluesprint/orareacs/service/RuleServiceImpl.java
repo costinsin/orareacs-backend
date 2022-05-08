@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -44,7 +43,7 @@ public class RuleServiceImpl implements RuleService {
         User user = userOptional.get();
         user.setRules(user.getRules().stream()
                 .filter(rule -> rule.getId() != null && !rule.getId().equals(ruleId))
-                .collect(Collectors.toList()));
+                .toList());
 
         userRepository.save(user);
     }

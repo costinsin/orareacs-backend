@@ -14,6 +14,4 @@ public interface TimetableRepository extends MongoRepository<Timetable, String> 
     void deleteByGroup(String group);
 
     Optional<Timetable> getTimetableByGroup(String group);
-
-    Optional<List<Timetable>> getAllByIdNotNull();
 }
