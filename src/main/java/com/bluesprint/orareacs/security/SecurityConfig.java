@@ -40,7 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
         http.authorizeRequests()
-                .antMatchers("/api/register", "/api", "/api/login", "/api/refreshToken", "/api/checkCredentials")
+                .antMatchers("/api/register", "/api", "/api/login", "/api/refreshToken", "/api/checkCredentials", "/api/getGroups")
                 .permitAll();
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);

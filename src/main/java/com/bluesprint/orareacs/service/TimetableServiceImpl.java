@@ -69,6 +69,18 @@ public class TimetableServiceImpl implements TimetableService {
     }
 
     @Override
+    public List<String> getGroups() {
+        Optional<List<Timetable>> timetableList = timetableRepository.getAllByIdNotNull();
+        if (timetableList.isEmpty()) {
+            return null;
+        }
+
+        return timetableList.get().stream()
+                .map(Timetable::getGroup)
+                .toList();
+    }
+
+    @Override
     public List<Event> getTimetable(String username) {
         Optional<User> userOptional = userRepository.findUserByUsername(username);
 
@@ -120,8 +132,8 @@ public class TimetableServiceImpl implements TimetableService {
 
                     for (Rule value : removeRules) {
                         if (value.getCourse().getId().equals(course.getId()) &&
-                                event.getStartDate().after(value.getCourse().getStartDate()) &&
-                                event.getStartDate().before(value.getCourse().getEndDate())) {
+                                event.getStart().after(value.getCourse().getStartDate()) &&
+                                event.getStart().before(value.getCourse().getEndDate())) {
                             checkEvent = false;
                             break;
                         }
@@ -140,9 +152,9 @@ public class TimetableServiceImpl implements TimetableService {
             Date endDate = addHour(rule.getCourse().getStartDate(), rule.getCourse().getEndHour());
 
             Event event = Event.builder()
-                    .name(rule.getCourse().getName() + " - " + StringUtils.capitalize(rule.getCourse().getType()))
-                    .startDate(startDate)
-                    .endDate(endDate)
+                    .title(rule.getCourse().getName() + " - " + StringUtils.capitalize(rule.getCourse().getType()))
+                    .start(startDate)
+                    .end(endDate)
                     .build();
             events.add(event);
         }
@@ -153,9 +165,9 @@ public class TimetableServiceImpl implements TimetableService {
             while (currentDate.before(rule.getCourse().getEndDate()) ||
                     currentDate.equals(rule.getCourse().getEndDate())) {
                 Event event = Event.builder()
-                        .name(rule.getCourse().getName() + " - " + StringUtils.capitalize(rule.getCourse().getType()))
-                        .startDate(addHour(currentDate, rule.getCourse().getStartHour()))
-                        .endDate(addHour(currentDate, rule.getCourse().getEndHour()))
+                        .title(rule.getCourse().getName() + " - " + StringUtils.capitalize(rule.getCourse().getType()))
+                        .start(addHour(currentDate, rule.getCourse().getStartHour()))
+                        .end(addHour(currentDate, rule.getCourse().getEndHour()))
                         .build();
                 events.add(event);
 
@@ -173,9 +185,9 @@ public class TimetableServiceImpl implements TimetableService {
             while (currentDate.before(rule.getCourse().getEndDate()) ||
                     currentDate.equals(rule.getCourse().getEndDate())) {
                 Event event = Event.builder()
-                        .name(rule.getCourse().getName() + " - " + StringUtils.capitalize(rule.getCourse().getType()))
-                        .startDate(addHour(currentDate, rule.getCourse().getStartHour()))
-                        .endDate(addHour(currentDate, rule.getCourse().getEndHour()))
+                        .title(rule.getCourse().getName() + " - " + StringUtils.capitalize(rule.getCourse().getType()))
+                        .start(addHour(currentDate, rule.getCourse().getStartHour()))
+                        .end(addHour(currentDate, rule.getCourse().getEndHour()))
                         .build();
                 events.add(event);
 
@@ -193,9 +205,9 @@ public class TimetableServiceImpl implements TimetableService {
             while (currentDate.before(rule.getCourse().getEndDate()) ||
                     currentDate.equals(rule.getCourse().getEndDate())) {
                 Event event = Event.builder()
-                        .name(rule.getCourse().getName() + " - " + StringUtils.capitalize(rule.getCourse().getType()))
-                        .startDate(addHour(currentDate, rule.getCourse().getStartHour()))
-                        .endDate(addHour(currentDate, rule.getCourse().getEndHour()))
+                        .title(rule.getCourse().getName() + " - " + StringUtils.capitalize(rule.getCourse().getType()))
+                        .start(addHour(currentDate, rule.getCourse().getStartHour()))
+                        .end(addHour(currentDate, rule.getCourse().getEndHour()))
                         .build();
                 events.add(event);
 
@@ -207,23 +219,23 @@ public class TimetableServiceImpl implements TimetableService {
     }
 
     public Date addDays(Date date, int days) {
-        LocalDateTime localDateTime = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        LocalDateTime localDateTime = date.toInstant().atZone(ZoneId.of("UTC")).toLocalDateTime();
         localDateTime = localDateTime.plusDays(days);
 
-        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+        return Date.from(localDateTime.atZone(ZoneId.of("UTC")).toInstant());
     }
 
     public Date addHour(Date date, String hour) {
-        LocalDateTime localDateTime = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-
+        LocalDateTime localDateTime = date.toInstant().atZone(ZoneId.of("UTC")).toLocalDateTime();
         String[] split = hour.split(":");
         localDateTime = localDateTime.plusHours(Integer.parseInt(split[0])).plusMinutes(Integer.parseInt(split[1]));
-        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+
+        return Date.from(localDateTime.atZone(ZoneId.of("UTC")).toInstant());
     }
 
     public long getWeeksBetween(Date start, Date end) {
-        LocalDateTime startLocalDate = start.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-        LocalDateTime endLocalDate = end.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        LocalDateTime startLocalDate = start.toInstant().atZone(ZoneId.of("UTC")).toLocalDateTime();
+        LocalDateTime endLocalDate = end.toInstant().atZone(ZoneId.of("UTC")).toLocalDateTime();
 
         return ChronoUnit.WEEKS.between(startLocalDate, endLocalDate);
     }

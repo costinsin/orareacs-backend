@@ -12,7 +12,7 @@ import java.util.Date;
 @Data
 @Builder
 public class Event {
-    private String name;
-    private Date startDate;
-    private Date endDate;
+    private String title;
+    private Date start;
+    private Date end;
 }
