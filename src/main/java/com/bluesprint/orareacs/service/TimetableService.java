@@ -14,4 +14,6 @@ public interface TimetableService {
     List<Event> getTimetable(String username);
 
     List<Course> getCourses(String username);
+
+    List<String> getGroups();
 }
