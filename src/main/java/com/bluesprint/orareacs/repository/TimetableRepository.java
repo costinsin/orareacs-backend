@@ -1,6 +1,7 @@
 package com.bluesprint.orareacs.repository;
 
 import com.bluesprint.orareacs.entity.Timetable;
+import com.bluesprint.orareacs.entity.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
