@@ -6,15 +6,20 @@ import com.bluesprint.orareacs.dto.TimetableAddResponse;
 import com.bluesprint.orareacs.dto.TimetableDeleteResponse;
 import com.bluesprint.orareacs.entity.Course;
 import com.bluesprint.orareacs.entity.Timetable;
+import com.bluesprint.orareacs.service.EmailService;
 import com.bluesprint.orareacs.service.TimetableService;
+import com.bluesprint.orareacs.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.List;
 
+import static com.bluesprint.orareacs.filter.FilterUtils.EMAIL;
 import static com.bluesprint.orareacs.filter.FilterUtils.TOKEN_HEADER;
 
 @RestController
@@ -23,6 +28,8 @@ import static com.bluesprint.orareacs.filter.FilterUtils.TOKEN_HEADER;
 public class TimetableController {
 
     private final TimetableService timetableService;
+    private final UserService userService;
+    private final EmailService emailService;
 
     @PreAuthorize("hasAuthority('admin')")
     @PostMapping("/timetable")
@@ -33,6 +40,14 @@ public class TimetableController {
                 .status(HttpStatus.OK.value())
                 .message("Timetable for group: " + timetable.getGroup() + " added.")
                 .build();
+
+        userService.getUsersByGroup(timetable.getGroup()).forEach(
+                user -> emailService.sendSimpleMessage(EMAIL,
+                        user.getEmail(),
+                        "[" + user.getGroup() + "] Timetable added",
+                        "Timetable for group " + user.getGroup() + " has been added.")
+        );
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -45,6 +60,9 @@ public class TimetableController {
                 .status(HttpStatus.OK.value())
                 .message("Timetable for group: " + group + " deleted.")
                 .build();
+
+
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
