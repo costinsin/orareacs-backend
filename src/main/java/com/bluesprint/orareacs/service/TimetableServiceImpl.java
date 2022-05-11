@@ -47,6 +47,15 @@ public class TimetableServiceImpl implements TimetableService {
         }
 
         timetableRepository.deleteByGroup(group);
+
+        userRepository.getAllByGroup(group).forEach(
+                user -> {
+                    user.setRules(user.getRules().stream()
+                            .filter(rule -> rule.getType().equalsIgnoreCase("add"))
+                            .toList());
+                    userRepository.save(user);
+                }
+        );
     }
 
     @Override

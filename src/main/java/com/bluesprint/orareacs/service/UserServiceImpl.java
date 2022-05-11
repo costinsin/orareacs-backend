@@ -16,9 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -63,6 +61,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public Optional<User> findUserByUsername(String username) {
         return repository.findUserByUsername(username);
+    }
+
+    @Override
+    public List<User> getUsersByGroup(String group) {
+        return repository.getAllByGroup(group);
     }
 
     @Override
