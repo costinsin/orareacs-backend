@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.bluesprint.orareacs.filter.FilterUtils.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -59,7 +58,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 .build();
         MongoClient mongoClient = MongoClients.create(settings);
         MongoDatabase database = mongoClient.getDatabase(DATABASE);
-        MongoCollection<Document> collection = database.getCollection(COLLECTION);
+        MongoCollection<Document> collection = database.getCollection(USER_COLLECTION);
 
         try {
             loginCredentials = objectMapper.readValue(request.getReader(), LoginCredentials.class);
