@@ -14,9 +14,9 @@ public class FilterUtils {
             "/api/checkCredentials", "/api/getGroups");
     public static final String TOKEN_HEADER = "Bearer ";
     public static final String DATABASE = "orareACS";
-    public static final String COLLECTION = "user";
+    public static final String USER_COLLECTION = "user";
+    public static final String EMAIL = "orareacs@gmail.com";
     public static final String USERNAME_FIELD = "username";
-    public static final String EMAIL = "lolconturi@gmail.com";
     public static final String TWO_FACTOR_SECRET_FIELD = "twoFactorSecret";
     public static final String DB_CONNECT_URL = System.getenv("SPRING_DATA_MONGODB_URI");
 
