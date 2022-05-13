@@ -15,8 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatterBuilder;
+import javax.mail.MessagingException;
 import java.util.List;
 
 import static com.bluesprint.orareacs.filter.FilterUtils.EMAIL;
@@ -42,10 +41,17 @@ public class TimetableController {
                 .build();
 
         userService.getUsersByGroup(timetable.getGroup()).forEach(
-                user -> emailService.sendSimpleMessage(EMAIL,
-                        user.getEmail(),
-                        "[" + user.getGroup() + "] Timetable added",
-                        "Timetable for group " + user.getGroup() + " has been added.")
+                user -> {
+                    try {
+                        emailService.sendEmailWithResource(EMAIL,
+                                user.getEmail(),
+                                "[" + user.getGroup() + "] Timetable added",
+                                "Timetable for group " + user.getGroup() + " has been added.",
+                                "assets/logo.png");
+                    } catch (MessagingException e) {
+                        e.printStackTrace();
+                    }
+                }
         );
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -60,8 +66,6 @@ public class TimetableController {
                 .status(HttpStatus.OK.value())
                 .message("Timetable for group: " + group + " deleted.")
                 .build();
-
-
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

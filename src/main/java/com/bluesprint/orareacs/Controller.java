@@ -33,21 +33,12 @@ public class Controller {
     }
 
     @PreAuthorize("hasAnyAuthority('admin', 'student')")
-    @GetMapping("/api/test-email")
-    public void testEmail() {
-        emailService.sendSimpleMessage(EMAIL,
-                "a144185i@gmail.com",
-                "Testare",
-                "test1.");
-    }
-
-    @PreAuthorize("hasAnyAuthority('admin', 'student')")
     @GetMapping("/api/test-attachment-email")
     public void testAttachmentEmail() throws MessagingException {
-        emailService.sendMessageWithAttachment(EMAIL,
-                "a144185i@gmail.com",
+        emailService.sendEmailWithResource(EMAIL,
+                "stroescutudor@yahoo.com",
                 "Testare",
-                "test1.",
-                "E:\\FACULTATE_PC\\Anul3\\SEM2\\IP\\orareacs-backend\\src\\main\\java\\com\\bluesprint\\orareacs\\assets\\icon.png");
+                "test2",
+                "assets/logo.png");
     }
 }
