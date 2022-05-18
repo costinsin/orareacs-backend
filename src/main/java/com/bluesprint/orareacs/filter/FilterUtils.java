@@ -17,6 +17,7 @@ public class FilterUtils {
     public static final String TOKEN_HEADER = "Bearer ";
     public static final String DATABASE = "orareACS";
     public static final String USER_COLLECTION = "user";
+    public static final String EMAIL = "orareacs@gmail.com";
     public static final String USERNAME_FIELD = "username";
     public static final String TWO_FACTOR_SECRET_FIELD = "twoFactorSecret";
     public static final String DB_CONNECT_URL = "mongodb+srv://stefan00:st3f4n@testcluster.pg6jd.mongodb.net/" +
