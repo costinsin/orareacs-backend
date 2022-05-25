@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.bluesprint.orareacs.dto.Event;
 import com.bluesprint.orareacs.dto.TimetableAddResponse;
 import com.bluesprint.orareacs.dto.TimetableDeleteResponse;
+import com.bluesprint.orareacs.dto.TimetableUpdateResponse;
 import com.bluesprint.orareacs.entity.Course;
 import com.bluesprint.orareacs.entity.Timetable;
 import com.bluesprint.orareacs.service.EmailService;
@@ -95,5 +96,26 @@ public class TimetableController {
         List<String> groups = timetableService.getGroups();
 
         return new ResponseEntity<>(groups, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('admin')")
+    @GetMapping("/timetable/{group}")
+    public ResponseEntity<?> getTimetableByGroup(@PathVariable String group) {
+        Timetable t = timetableService.getTimetableByGroup(group);
+
+        return new ResponseEntity<>(t, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('admin')")
+    @PutMapping("/timetable/{group}")
+    public ResponseEntity<?> updateTimetable(@RequestBody Timetable timetable) {
+        timetableService.updateTimetable(timetable);
+
+        TimetableUpdateResponse response = TimetableUpdateResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("Timetable for group: " + timetable.getGroup() + " updated.")
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
