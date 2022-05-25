@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.sql.Time;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -35,6 +36,15 @@ public class TimetableServiceImpl implements TimetableService {
         }
 
         timetable.getCourses().forEach(course -> course.setId(UUID.randomUUID().toString()));
+        timetableRepository.save(timetable);
+    }
+
+    @Override
+    @Transactional
+    public void updateTimetable(Timetable timetable) {
+        if (timetable.getId() == null) {
+            throw new TimetableMissingException("Timetable should contain id.");
+        }
         timetableRepository.save(timetable);
     }
 
@@ -121,6 +131,16 @@ public class TimetableServiceImpl implements TimetableService {
         result.addAll(timetableEvents);
 
         return result;
+    }
+
+    @Override
+    public Timetable getTimetableByGroup(String group) {
+        Optional<Timetable> t = timetableRepository.getTimetableByGroup(group);
+        if (t.isEmpty()) {
+            throw new TimetableMissingException("Timetable for group " + group +
+                    " does not exist!");
+        }
+        return t.get();
     }
 
     private List<Event> processRemoveRule(List<Rule> removeRules, Course course, Timetable timetable) {
