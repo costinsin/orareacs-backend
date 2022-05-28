@@ -71,7 +71,7 @@ public class TimetableController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('student')")
+    @PreAuthorize("hasAnyAuthority('student', 'admin')")
     @GetMapping("/timetable")
     public ResponseEntity<?> getTimetable(@RequestHeader("Authorization") String authorizationHeader) {
         String token = authorizationHeader.substring(TOKEN_HEADER.length());
@@ -81,7 +81,7 @@ public class TimetableController {
         return new ResponseEntity<>(events, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('student')")
+    @PreAuthorize("hasAnyAuthority('student', 'admin')")
     @GetMapping("/course")
     public ResponseEntity<?> getCourse(@RequestHeader("Authorization") String authorizationHeader) {
         String token = authorizationHeader.substring(TOKEN_HEADER.length());
