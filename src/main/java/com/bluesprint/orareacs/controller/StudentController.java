@@ -26,7 +26,7 @@ public class StudentController {
     private final UserService userService;
     private final ModelMapper modelMapper;
 
-    @PreAuthorize("hasAuthority('student')")
+    @PreAuthorize("hasAnyAuthority('student', 'admin')")
     @GetMapping("/getDetails")
     public ResponseEntity<?> getDetails(@RequestHeader("Authorization") String authorizationHeader) {
         String token = authorizationHeader.substring(TOKEN_HEADER.length());
@@ -40,7 +40,7 @@ public class StudentController {
         return new ResponseEntity<>(modelMapper.map(userOptional.get(), UserDetailsDto.class), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('student')")
+    @PreAuthorize("hasAnyAuthority('student', 'admin')")
     @PutMapping("/updateDetails")
     public ResponseEntity<?> updateDetails(@RequestBody UserUpdateDto userDetails,
                                            @RequestHeader("Authorization") String authorizationHeader) {

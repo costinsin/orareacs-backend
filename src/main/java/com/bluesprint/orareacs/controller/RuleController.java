@@ -21,7 +21,7 @@ import static com.bluesprint.orareacs.filter.FilterUtils.TOKEN_HEADER;
 public class RuleController {
     private final RuleService ruleService;
 
-    @PreAuthorize("hasAuthority('student')")
+    @PreAuthorize("hasAnyAuthority('student', 'admin')")
     @PostMapping("/rule")
     public ResponseEntity<?> addRule(@RequestBody Rule rule,
                                      @RequestHeader("Authorization") String authorizationHeader) {
@@ -35,9 +35,9 @@ public class RuleController {
         return new ResponseEntity<>(successResponse, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('student')")
+    @PreAuthorize("hasAnyAuthority('student', 'admin')")
     @DeleteMapping("/rule/{ruleId}")
-    public ResponseEntity<?> addRule(@PathVariable String ruleId,
+    public ResponseEntity<?> deleteRule(@PathVariable String ruleId,
                                      @RequestHeader("Authorization") String authorizationHeader) {
         String token = authorizationHeader.substring(TOKEN_HEADER.length());
         String username = JWT.decode(token).getSubject();
@@ -49,7 +49,7 @@ public class RuleController {
         return new ResponseEntity<>(successResponse, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('student')")
+    @PreAuthorize("hasAnyAuthority('student', 'admin')")
     @GetMapping("/rule")
     public ResponseEntity<?> getRules(@RequestHeader("Authorization") String authorizationHeader) {
         String token = authorizationHeader.substring(TOKEN_HEADER.length());
